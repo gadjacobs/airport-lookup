@@ -1,30 +1,39 @@
-import { NextPage } from 'next'
+import { NextPage } from 'next';
+import { useState } from 'react';
+import AirportsList from '../components/AirportsList/AirportsList';
 
-import Layout from '../components/layout'
-import useApiData from '../hooks/use-api-data'
-import Airport from '../types/airport'
+import Layout from '../components/Layout/Layout';
+import SearchInput from '../components/SearchInput/SearchInput';
+import useApiData from '../hooks/use-api-data';
+import Airport from '../types/airport';
 
 const Page: NextPage = () => {
-  const airports = useApiData<Airport[]>('/api/airports', [])
+  const airports = useApiData<Airport[]>('/api/airports', []);
+  const [searchField, setSearchField] = useState('');
 
-  return <Layout>
-    <h1 className='text-2xl'>DBL Code Challenge: Airports</h1>
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchField(e.target.value);
+  };
 
-    <h2 className="mt-10 text-xl">All Airports</h2>
+  const filteredAirports = airports.filter(
+    (airport) =>
+      airport.name.toLowerCase().includes(searchField.toLowerCase()) ||
+      airport.iata.toLowerCase().includes(searchField.toLowerCase())
+  );
 
-    <div>
-      {airports.map(airport => (
-        <a href={`/airports/${airport.iata.toLowerCase()}`} key={airport.iata} className='mt-5 flex items-center shadow p-5 border'>
-          <div>
-            {airport.name}, {airport.city}
-          </div>
-          <div className='ml-auto text-mono'>
-            {airport.country}
-          </div>
-        </a>
-      ))}
-    </div>
-  </Layout>
-}
+  return (
+    <Layout>
+      <h1 className="text-4xl font-bold">DBL Code Challenge: Airports</h1>
 
-export default Page
+      <SearchInput searchChange={onSearchChange} />
+
+      <h2 className="mt-10 text-2xl font-bold">
+        Airports <span className='text-sm border rounded-xl bg-blue-500 text-white px-3 py-1 ml-2 font-light'>{airports.length}</span>
+      </h2>
+
+      <AirportsList airports={filteredAirports} />
+    </Layout>
+  );
+};
+
+export default Page;
