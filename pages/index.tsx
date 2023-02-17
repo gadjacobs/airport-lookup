@@ -1,15 +1,33 @@
 import { NextPage } from 'next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AirportsList from '../components/AirportsList/AirportsList';
-
 import Layout from '../components/Layout/Layout';
 import SearchInput from '../components/SearchInput/SearchInput';
 import useApiData from '../hooks/use-api-data';
 import Airport from '../types/airport';
 
 const Page: NextPage = () => {
-  const airports = useApiData<Airport[]>('/api/airports', []);
   const [searchField, setSearchField] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+
+  function handleScroll() {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      setPage(page => page + 1);
+      setLimit(limit => limit + 10);
+    }
+  }
+
+  useEffect(() => {
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const airports = useApiData<Airport[]>(`/api/airports?page=${page}&limit=${limit}`, []);
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchField(e.target.value);

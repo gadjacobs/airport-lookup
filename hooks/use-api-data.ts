@@ -8,7 +8,7 @@ export const useApiData = <T>(path: string, defaultValue: any): T => {
     instance.get<T>(path).catch(err => err.response).then(response => {
       setData(response.data)
     })
-  }, [])
+  }, [path])
 
   return data
 }
