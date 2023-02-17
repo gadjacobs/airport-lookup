@@ -10,16 +10,16 @@ export default function AirportsList(props: IAirportsListProps) {
   return (
     <div className="flex flex-wrap">
       {props.airports.map((airport) => (
-        <div key={airport.iata} className="p-4 w-full lg:w-1/2">
+        <div key={airport.iata} className="p-2 w-full lg:w-1/2">
           <a
             href={`/airports/${airport.iata.toLowerCase()}`}
             key={airport.iata}
-            className="mt-5 flex items-center shadow p-5 border w-full md:w-1/"
+            className="mt-5 flex flex-col shadow p-6 border border-gray-200 rounded-lg"
           >
             <div>
               {airport.name}, {airport.city}
             </div>
-            <div className="ml-auto text-mono">{airport.country}</div>
+            <div className="text-mono text-gray-400 mt-2">{airport.country}</div>
           </a>
         </div>
       ))}
