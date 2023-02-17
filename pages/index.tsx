@@ -13,13 +13,14 @@ const Page: NextPage = () => {
 
   function handleScroll() {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-      setPage(page => page + 1);
-      setLimit(limit => limit + 10);
+      setTimeout(() => {
+        setPage((page) => page + 1);
+        setLimit((limit) => limit + 10);
+      }, 1000);
     }
   }
 
   useEffect(() => {
-
     window.addEventListener('scroll', handleScroll);
 
     return () => {
@@ -27,7 +28,10 @@ const Page: NextPage = () => {
     };
   }, []);
 
-  const airports = useApiData<Airport[]>(`/api/airports?page=${page}&limit=${limit}`, []);
+  const airports = useApiData<Airport[]>(
+    `/api/airports?page=${page}&limit=${limit}`,
+    []
+  );
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchField(e.target.value);
@@ -46,7 +50,10 @@ const Page: NextPage = () => {
       <SearchInput searchChange={onSearchChange} />
 
       <h2 className="mt-10 text-2xl font-bold">
-        Airports <span className='text-sm border rounded-xl bg-blue-500 text-white px-3 py-1 ml-2 font-light'>{airports.length}</span>
+        Airports{' '}
+        <span className="text-sm border rounded-xl bg-blue-500 text-white px-3 py-1 ml-2 font-light">
+          {airports.length}
+        </span>
       </h2>
 
       <AirportsList airports={filteredAirports} />
