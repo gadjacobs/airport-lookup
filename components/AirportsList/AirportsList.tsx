@@ -3,13 +3,14 @@ import Airport from '../../types/airport';
 
 export interface IAirportsListProps {
   airports: Airport[];
+  loading: boolean;
 }
 
 export default function AirportsList(props: IAirportsListProps) {
   return (
     <div className="flex flex-wrap">
       {props.airports.map((airport) => (
-        <div className='p-4 w-full lg:w-1/2'>
+        <div key={airport.iata} className="p-4 w-full lg:w-1/2">
           <a
             href={`/airports/${airport.iata.toLowerCase()}`}
             key={airport.iata}
@@ -20,17 +21,13 @@ export default function AirportsList(props: IAirportsListProps) {
             </div>
             <div className="ml-auto text-mono">{airport.country}</div>
           </a>
-        </div >
+        </div>
       ))}
-      <div className='flex flex-row w-full'>
-        <button type="button" className="mx-auto w-auto m-5" disabled>
-          <svg
-            className="animate-spin h-5 w-5 mr-3 fill-black stroke-white ..."
-            viewBox="0 0 24 24"
-          ></svg>
-          Fetching more...
-        </button>
-      </div >
+      {props.loading && (
+        <div className="flex flex-row w-full">
+          <p className="mx-auto w-auto m-5">Fetching more...</p>
+        </div>
+      )}
     </div>
   );
 }

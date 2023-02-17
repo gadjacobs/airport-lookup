@@ -10,38 +10,32 @@ const Page: NextPage = () => {
   const [searchField, setSearchField] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
+  const [loading, setLoading] = useState(false);
+
+  const airports = useApiData<Airport[]>(
+    `/api/airports?page=${page}&limit=${limit}&query=${searchField}`,
+    []
+  );
 
   function handleScroll() {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      setLoading(true);
       setTimeout(() => {
         setPage((page) => page + 1);
         setLimit((limit) => limit + 10);
+        setLoading(false);
       }, 1000);
     }
   }
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
   }, []);
-
-  const airports = useApiData<Airport[]>(
-    `/api/airports?page=${page}&limit=${limit}`,
-    []
-  );
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchField(e.target.value);
+    setPage(1);
   };
-
-  const filteredAirports = airports.filter(
-    (airport) =>
-      airport.name.toLowerCase().includes(searchField.toLowerCase()) ||
-      airport.iata.toLowerCase().includes(searchField.toLowerCase())
-  );
 
   return (
     <Layout>
@@ -56,7 +50,7 @@ const Page: NextPage = () => {
         </span>
       </h2>
 
-      <AirportsList airports={filteredAirports} />
+      <AirportsList airports={airports} loading={loading} />
     </Layout>
   );
 };
